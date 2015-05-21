@@ -3,6 +3,12 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
+
+import javax.sql.rowset.CachedRowSet;
+
 
 public class DB2Middle {
 		private static Connection con = null;
@@ -11,8 +17,9 @@ public class DB2Middle {
 		private static String dbName = "db212";   // Datenbankname
 		private static String dbUser = "db212";     // Datenbankuser
 		private static String dbPass = "arparili";      // Datenbankpasswort
-
-	private DB2Middle(){
+		private static ArrayList list = new ArrayList();
+		private static Statement query;
+		private DB2Middle(){
 	    try {
 	        Class.forName("com.mysql.jdbc.Driver"); // Datenbanktreiber für JDBC Schnittstellen laden.
 	 
@@ -35,7 +42,7 @@ public class DB2Middle {
 	    return con;
 	}
 	
-	 public static void printNameList() {
+	/* public static void printNameList() {
 	       try { con = getConnection();
 	 
 	      if(con != null){
@@ -57,48 +64,105 @@ public class DB2Middle {
 	         
 	          System.out.println(info);
 	          }
-	      }} catch (SQLException e) {
+	      return;}} catch (SQLException e) {
 	        e.printStackTrace();
 	      }
-	    }
+	    }*/
 	  
 	
 
 	public boolean createRoom(int seats) {
-		
-
+		try { con = getConnection();
+	       
+	      if(con != null){
+	      // Abfrage-Statement erzeugen.
+	     
+	          query = con.createStatement();
+	 
+	          // Tabelle anzeigen
+	          String sql ="SELECT raumnr,sitzplätze FROM raum";
+	          ResultSet result = query.executeQuery(sql);
+	
+	        // Ergebnisstabelle durchforsten
+	          while (result.next()) {
+	        	
+	          String raumnr = result.getString("raumnr");
+	          String sitzplätze = result.getString("sitzplätze");
+	          
+	          String info = raumnr+ ", " + sitzplätze ;
+		         
+	          System.out.println(info);
+	          }
+	          }
+	      } catch (SQLException e) {
+	        e.printStackTrace();
+	      }
 		return false;
+	    }
 
-	}
 
+	
 	public static ResultSet getAllRooms() {
+			
+		         
 		       try { con = getConnection();
-		 
+		       
 		      if(con != null){
 		      // Abfrage-Statement erzeugen.
-		      Statement query;
-		    
+		     
 		          query = con.createStatement();
 		 
 		          // Tabelle anzeigen
-		          String sql ="SELECT RaumNr,Sitzplätze FROM Raum";
-		          ResultSet result = query.executeQuery(sql);
-		 
+		          String sql ="SELECT raumnr,sitzplätze FROM raum";
+		           ResultSet result = query.executeQuery(sql);
+		
 		        // Ergebnisstabelle durchforsten
 		          while (result.next()) {
-		          String RaumNr = result.getString("RaumNr");
-		          String Sitzplätze = result.getString("Sitzplätze");
-		                
-		          String info = RaumNr+ ", " + Sitzplätze ;
-		         
+		        	
+		          String raumnr = result.getString("raumnr");
+		          String sitzplätze = result.getString("sitzplätze");
+		          
+		          String info = raumnr+ ", " + sitzplätze ;
+			         
 		          System.out.println(info);
-		          }return result;
-		      }} catch (SQLException e) {
+		          }
+		          }
+		      } catch (SQLException e) {
 		        e.printStackTrace();
 		      }
 			return null;
+		
 		    }
-		  
+	
+	/*  public static ResultSet getAllRooms() throws SQLException {
+	        String query = "SELECT * FROM employee";
+	        List<?> list = new ArrayList<>();
+	        String employee = null;
+	        ResultSet rs = null;
+	        try {
+	            con =getConnection();
+	            query = con.createStatement();
+	            rs = statement.executeQuery(query);
+	            while (rs.next()) {
+	                employee = new Employee();
+	              
+	                employee.setEmpId(rs.getInt("emp_id"));
+	                employee.setEmpName(rs.getString("emp_name"));
+	                employee.setDob(rs.getDate("dob"));
+	                employee.setSalary(rs.getDouble("salary"));
+	                employee.setDeptId((rs.getInt("dept_id")));
+	 
+	                //add each employee to the list
+	                list.add(employee);
+	            }
+	        } finally {
+	            DbUtil.close(rs);
+	            DbUtil.close(statement);
+	            DbUtil.close(connection);
+	        }
+	        return list;
+	    }*/
+	
 	
 		
 
