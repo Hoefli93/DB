@@ -1,21 +1,18 @@
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 
-import javax.sql.rowset.CachedRowSet;
 
 public class DB2Middle {
-	private static Connection con = null;
+	private static Connection con;
 	private static String dbHost = "codd.2clever4you.net"; // Hostname
 	private static String dbPort = "3306"; // Port -- Standard: 3306
 	private static String dbName = "db212"; // Datenbankname
 	private static String dbUser = "db212"; // Datenbankuser
 	private static String dbPass = "arparili"; // Datenbankpasswort
-	private static ArrayList list = new ArrayList();
 	private static Statement query;
 
 	private DB2Middle() {
@@ -53,9 +50,11 @@ public class DB2Middle {
 	 * // Tabelle anzeigen String sql ="SELECT RaumNr,Sitzplätze FROM Raum";
 	 * ResultSet result = query.executeQuery(sql);
 	 * 
-	 * // Ergebnisstabelle durchforsten while (result.next()) { String RaumNr =
-	 * result.getString("RaumNr"); String Sitzplätze =
-	 * result.getString("Sitzplätze");
+	 * // Ergebnisstabelle durchforsten 
+	 * 
+	 * while (result.next()) { 
+	 * String RaumNr =result.getString("RaumNr"); 
+	 * String Sitzplätze =result.getString("Sitzplätze");
 	 * 
 	 * String info = RaumNr+ ", " + Sitzplätze ;
 	 * 
@@ -63,9 +62,42 @@ public class DB2Middle {
 	 * e.printStackTrace(); } }
 	 */
 
-	public boolean createRoom(int seats) {
+	// Raum
+
+	public static boolean createRoom(int seats) {
+		 try {
+			 con = getConnection();
+		 
+		    if(con != null){
+		      
+		        // Insert-Statement erzeugen (Fragezeichen werden später ersetzt).
+		        String sql = "INSERT INTO raum(raumnr,sitzplätze)"+"VALUES(?,?)";
+		        PreparedStatement preparedStatement = con.prepareStatement(sql);
+		        String lastroom = "SELECT raumnr FROM raum";
+		        
+		        // Erstes Fragezeichen durch "firstName" Parameter ersetzen
+     preparedStatement.setInt(1,7);
+      //Zweites Fragezeichen durch "lastName" Parameter ersetzen
+     preparedStatement.setInt(2, seats);
+     // SQL ausführen.
+     preparedStatement.executeUpdate();
+     
+		        // Es wird der letzte Datensatz abgefragt
+		        
+     ResultSet result = preparedStatement.executeQuery(lastroom);
+     result.getInt(lastroom);
+     
+     
+     
+		         return true;
+		      }} catch (SQLException e) {
+		        e.printStackTrace();
+		      }
 		return false;
-	}
+		  
+		  }
+	
+	
 
 	public static ResultSet getAllRooms() {
 
@@ -84,26 +116,7 @@ public class DB2Middle {
 			e.printStackTrace();
 		}
 		return null;
-
 	}
-
-	/*
-	 * public static ResultSet getAllRooms() throws SQLException { String query
-	 * = "SELECT * FROM employee"; List<?> list = new ArrayList<>(); String
-	 * employee = null; ResultSet rs = null; try { con =getConnection(); query =
-	 * con.createStatement(); rs = statement.executeQuery(query); while
-	 * (rs.next()) { employee = new Employee();
-	 * 
-	 * employee.setEmpId(rs.getInt("emp_id"));
-	 * employee.setEmpName(rs.getString("emp_name"));
-	 * employee.setDob(rs.getDate("dob"));
-	 * employee.setSalary(rs.getDouble("salary"));
-	 * employee.setDeptId((rs.getInt("dept_id")));
-	 * 
-	 * //add each employee to the list list.add(employee); } } finally {
-	 * DbUtil.close(rs); DbUtil.close(statement); DbUtil.close(connection); }
-	 * return list; }
-	 */
 
 	public ResultSet getRoomById(int id) {
 
@@ -119,6 +132,8 @@ public class DB2Middle {
 		return false;
 
 	}
+
+	// Vorlesung
 
 	public boolean createLecture(String name, int roomnr, int professornr,
 			int coursenr) {
@@ -147,6 +162,8 @@ public class DB2Middle {
 
 	}
 
+	// Professor
+
 	public boolean createProfessor(String name, String firstname, String email,
 			String tel) {
 		return false;
@@ -173,6 +190,8 @@ public class DB2Middle {
 		return false;
 
 	}
+
+	// Student
 
 	public boolean createStudent(int id, String name, String firstname,
 			String email) {
@@ -206,6 +225,8 @@ public class DB2Middle {
 		return false;
 
 	}
+
+	// Fach
 
 	public ResultSet getAllCourses() {
 		return null;

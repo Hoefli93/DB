@@ -1,15 +1,15 @@
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-
 public class Test {
 
 	public static void main(String[] args) throws SQLException {
-		ResultSet as = DB2Middle.getAllRooms();
 		
-		
-		while ( as.next() )
-			System.out.printf( "%s, %s, %s%n", as.getString(1), as.getString(2));
+		/*ResultSet rs = DB2Middle.getAllRooms();
+		while (rs.next())
+			System.out.println(rs.getInt(1) + "," + rs.getString(2));
+		*/
+	DB2Middle.createRoom(40);
+	
 	}
-
 }
