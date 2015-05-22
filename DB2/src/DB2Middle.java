@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-
 public class DB2Middle {
 	private static Connection con;
 	private static String dbHost = "codd.2clever4you.net"; // Hostname
@@ -50,11 +49,10 @@ public class DB2Middle {
 	 * // Tabelle anzeigen String sql ="SELECT RaumNr,Sitzplätze FROM Raum";
 	 * ResultSet result = query.executeQuery(sql);
 	 * 
-	 * // Ergebnisstabelle durchforsten 
+	 * // Ergebnisstabelle durchforsten
 	 * 
-	 * while (result.next()) { 
-	 * String RaumNr =result.getString("RaumNr"); 
-	 * String Sitzplätze =result.getString("Sitzplätze");
+	 * while (result.next()) { String RaumNr =result.getString("RaumNr"); String
+	 * Sitzplätze =result.getString("Sitzplätze");
 	 * 
 	 * String info = RaumNr+ ", " + Sitzplätze ;
 	 * 
@@ -65,39 +63,35 @@ public class DB2Middle {
 	// Raum
 
 	public static boolean createRoom(int seats) {
-		 try {
-			 con = getConnection();
-		 
-		    if(con != null){
-		      
-		        // Insert-Statement erzeugen (Fragezeichen werden später ersetzt).
-		        String sql = "INSERT INTO raum(raumnr,sitzplätze)"+"VALUES(?,?)";
-		        PreparedStatement preparedStatement = con.prepareStatement(sql);
-		        String lastroom = "SELECT raumnr FROM raum";
-		        
-		        // Erstes Fragezeichen durch "firstName" Parameter ersetzen
-     preparedStatement.setInt(1,7);
-      //Zweites Fragezeichen durch "lastName" Parameter ersetzen
-     preparedStatement.setInt(2, seats);
-     // SQL ausführen.
-     preparedStatement.executeUpdate();
-     
-		        // Es wird der letzte Datensatz abgefragt
-		        
-     ResultSet result = preparedStatement.executeQuery(lastroom);
-     result.getInt(lastroom);
-     
-     
-     
-		         return true;
-		      }} catch (SQLException e) {
-		        e.printStackTrace();
-		      }
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				query = con.createStatement();
+
+				String sqllast = "SELECT raumnr,sitzplätze FROM raum ORDER BY raumnr DESC LIMIT 1";
+				ResultSet rs = query.executeQuery(sqllast);
+				rs.next();
+				int id = rs.getInt(1)+1;
+
+				String sql2 = "INSERT INTO raum(raumnr,sitzplätze) VALUES(?,?)";
+				PreparedStatement preparedStatement = con.prepareStatement(sql2);
+
+				preparedStatement.setInt(1, id);
+				preparedStatement.setInt(2, seats);
+
+				
+				preparedStatement.executeUpdate();
+
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-		  
-		  }
-	
-	
+
+	}
 
 	public static ResultSet getAllRooms() {
 
