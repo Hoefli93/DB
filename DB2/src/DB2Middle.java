@@ -71,25 +71,21 @@ public class DB2Middle {
 				query = con.createStatement();
 
 				String sqllast = "SELECT raumnr,sitzplätze FROM raum ORDER BY raumnr DESC LIMIT 1";
-				ResultSet rs = query.executeQuery(sqllast);
-				rs.next();
-				int id = rs.getInt(1)+1;
-
-				String sql2 = "INSERT INTO raum(raumnr,sitzplätze) VALUES(?,?)";
-				PreparedStatement preparedStatement = con.prepareStatement(sql2);
-
+				ResultSet result = query.executeQuery(sqllast);
+				result.next();
+				int id = result.getInt(1) + 1;
+				String sql = "INSERT INTO raum(raumnr,sitzplätze) VALUES(?,?)";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
 				preparedStatement.setInt(1, id);
 				preparedStatement.setInt(2, seats);
-
-				
 				preparedStatement.executeUpdate();
 
-				return true;
+				
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return false;
+		return true;
 
 	}
 
@@ -104,6 +100,7 @@ public class DB2Middle {
 				// Tabelle anzeigen
 				String sql = "SELECT raumnr,sitzplätze FROM raum";
 				ResultSet result = query.executeQuery(sql);
+
 				return result;
 			}
 		} catch (SQLException e) {
@@ -112,19 +109,75 @@ public class DB2Middle {
 		return null;
 	}
 
-	public ResultSet getRoomById(int id) {
+	public static ResultSet getRoomById(int id) {
 
+		try {
+			con = getConnection();
+
+			if (con != null) {
+				// Abfrage-Statement erzeugen.
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String string = String.valueOf(id);
+				String sql = "SELECT raumnr,sitzplätze FROM raum where raumnr="
+						+ string;
+				ResultSet result = query.executeQuery(sql);
+				result.next();
+				return result;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 
-	public boolean editRoom(int id, int seats) {
+	public static boolean editRoom(int id, int seats) {
+		try {
+			con = getConnection();
 
+			if (con != null) {
+
+				String sql = "SELECT * FROM raum WHERE raumnr = ?";
+				// PreparedStatement erzeugen.
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				preparedStatement.setInt(1, id);
+				
+				// Ergebnistabelle erzeugen und abholen.
+				String updateSql = "UPDATE raum "
+						+ "SET raumnr = ?, sitzplätze = ? "
+						+ "WHERE raumnr = ?";
+				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
+				// Erstes Fragezeichen durch "id" Parameter ersetzen
+				preparedUpdateStatement.setInt(1, id);
+				// Zweites Fragezeichen durch "seats" Parameter ersetzen
+				preparedUpdateStatement.setInt(2, seats);
+				// Drittes Fragezeichen durch "id" Parameter ersetzen
+				preparedUpdateStatement.setInt(3, id);
+
+				preparedUpdateStatement.executeUpdate();
+				
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return true;
 	}
 
-	public boolean deleteRoomById(int id) {
-		return false;
+	public static boolean deleteRoomById(int id) {
+		try {
+			con = getConnection();
 
+			if (con != null) {
+				// Abfrage-Statement erzeugen.
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String string = String.valueOf(id);
+				String sql = "DELETE FROM raum WHERE raumnr="+string;
+				query.executeUpdate(sql);}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return true;
 	}
 
 	// Vorlesung
