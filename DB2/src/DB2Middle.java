@@ -81,11 +81,11 @@ public class DB2Middle {
 				preparedStatement.executeUpdate();
 
 				
-			}
+			return true;}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 
 	}
 
@@ -95,12 +95,14 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
+				
 				// Abfrage-Statement erzeugen.
 				query = con.createStatement();
 				// Tabelle anzeigen
-				String sql = "SELECT raumnr,sitzplätze FROM raum";
+				String sql = "SELECT * FROM raum";
 				ResultSet result = query.executeQuery(sql);
-
+				while(result.next()==true)
+				System.out.println(result.getInt(1) + "," + result.getString(2));
 				return result;
 			}
 		} catch (SQLException e) {
@@ -136,11 +138,12 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
-
-				String sql = "SELECT * FROM raum WHERE raumnr = ?";
+			
+				ResultSet rs= getRoomById(id);
+				String sql = "SELECT * FROM raum WHERE raumnr = ?"+rs.getString(1);
 				// PreparedStatement erzeugen.
+				
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				preparedStatement.setInt(1, id);
 				
 				// Ergebnistabelle erzeugen und abholen.
 				String updateSql = "UPDATE raum "
@@ -156,11 +159,11 @@ public class DB2Middle {
 
 				preparedUpdateStatement.executeUpdate();
 				
-			}
+			return true;}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 	public static boolean deleteRoomById(int id) {
@@ -168,16 +171,18 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
+				
+				ResultSet rs= getRoomById(id);
 				// Abfrage-Statement erzeugen.
 				query = con.createStatement();
 				// Tabelle anzeigen
-				String string = String.valueOf(id);
-				String sql = "DELETE FROM raum WHERE raumnr="+string;
+				String sql = "DELETE FROM raum WHERE raumnr="+rs.getString(1);
 				query.executeUpdate(sql);}
+			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return true;
+		return false;
 	}
 
 	// Vorlesung
