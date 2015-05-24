@@ -80,8 +80,8 @@ public class DB2Middle {
 				preparedStatement.setInt(2, seats);
 				preparedStatement.executeUpdate();
 
-				
-			return true;}
+				return true;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -95,14 +95,15 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
-				
+
 				// Abfrage-Statement erzeugen.
 				query = con.createStatement();
 				// Tabelle anzeigen
 				String sql = "SELECT * FROM raum";
 				ResultSet result = query.executeQuery(sql);
-				while(result.next()==true)
-				System.out.println(result.getInt(1) + "," + result.getString(2));
+				while (result.next() == true)
+					System.out.println(result.getInt(1) + ","
+							+ result.getString(2));
 				return result;
 			}
 		} catch (SQLException e) {
@@ -118,14 +119,18 @@ public class DB2Middle {
 
 			if (con != null) {
 				// Abfrage-Statement erzeugen.
+
 				query = con.createStatement();
 				// Tabelle anzeigen
 				String string = String.valueOf(id);
 				String sql = "SELECT raumnr,sitzplätze FROM raum where raumnr="
 						+ string;
+
 				ResultSet result = query.executeQuery(sql);
 				result.next();
+
 				return result;
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -138,18 +143,20 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
-			
-				ResultSet rs= getRoomById(id);
-				String sql = "SELECT * FROM raum WHERE raumnr = ?"+rs.getString(1);
+
+				ResultSet rs = getRoomById(id);
+				String sql = "SELECT * FROM raum WHERE raumnr = ?"
+						+ rs.getString(1);
 				// PreparedStatement erzeugen.
-				
+
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				
+
 				// Ergebnistabelle erzeugen und abholen.
 				String updateSql = "UPDATE raum "
 						+ "SET raumnr = ?, sitzplätze = ? "
 						+ "WHERE raumnr = ?";
-				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
+				PreparedStatement preparedUpdateStatement = con
+						.prepareStatement(updateSql);
 				// Erstes Fragezeichen durch "id" Parameter ersetzen
 				preparedUpdateStatement.setInt(1, id);
 				// Zweites Fragezeichen durch "seats" Parameter ersetzen
@@ -158,8 +165,9 @@ public class DB2Middle {
 				preparedUpdateStatement.setInt(3, id);
 
 				preparedUpdateStatement.executeUpdate();
-				
-			return true;}
+
+				return true;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -171,13 +179,14 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
-				
-				ResultSet rs= getRoomById(id);
+
+				ResultSet rs = getRoomById(id);
 				// Abfrage-Statement erzeugen.
 				query = con.createStatement();
 				// Tabelle anzeigen
-				String sql = "DELETE FROM raum WHERE raumnr="+rs.getString(1);
-				query.executeUpdate(sql);}
+				String sql = "DELETE FROM raum WHERE raumnr=" + rs.getString(1);
+				query.executeUpdate(sql);
+			}
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -272,13 +281,44 @@ public class DB2Middle {
 		return false;
 
 	}
+	// Fach
+	public static boolean createCourse(String name) {		
+		try {
+		con = getConnection();
 
-	public boolean createCourse(String name) {
-		return false;
+		if (con != null) {
+
+			query = con.createStatement();
+			
+			String sqllast = "SELECT *  FROM fach ORDER BY fachnr DESC LIMIT 1";
+			ResultSet result = query.executeQuery(sqllast);
+			
+			while(result.next()){
+			String sql = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
+			int id = result.getInt(1) + 1;
+			PreparedStatement preparedStatement = con.prepareStatement(sql);
+			preparedStatement.setInt(1, id);
+			preparedStatement.setString(2, name);
+			preparedStatement.executeUpdate();
+
+			return true;}
+				
+				String sql1 = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
+				PreparedStatement preparedStatement1 = con.prepareStatement(sql1);
+				preparedStatement1.setInt(1, 1);
+				preparedStatement1.setString(2, name);
+				preparedStatement1.executeUpdate();
+				return true;
+			}
+		
+	} catch (SQLException e) {
+		e.printStackTrace();
+	}
+	return false;
 
 	}
 
-	// Fach
+
 
 	public ResultSet getAllCourses() {
 		return null;

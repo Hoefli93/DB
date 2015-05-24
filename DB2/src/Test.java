@@ -5,23 +5,24 @@ public class Test {
 
 	public static void main(String[] args) throws SQLException {
 
-		/*
-		 * DB2Middle.getAllRooms();
+		
+		 /* DB2Middle.getAllRooms();
 		 
 
-		if (DB2Middle.createRoom(70) == true)
+		if (DB2Middle.createRoom(60) == true)
 			System.out.println("true");
-
+*/
 			
-			ResultSet rs = DB2Middle.getRoomById(8);
+			/*ResultSet rs = DB2Middle.getRoomById(2);
 			 
 			  System.out.println(rs.getInt(1) + "," + rs.getString(2));
 			  
-			  if(DB2Middle.editRoom(6, 87)==true) System.out.println("true");*/
+			   if(DB2Middle.editRoom(6, 87)==true) System.out.println("true");
 		
-			  /* if(DB2Middle.deleteRoomById(8)==true){
+			  if(DB2Middle.deleteRoomById(8)==true){
 			  System.out.println("true"); }
 			 */
+		if (DB2Middle.createCourse("VAR") == true);
 		}
 	}
 
