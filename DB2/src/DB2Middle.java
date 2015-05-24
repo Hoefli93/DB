@@ -281,44 +281,43 @@ public class DB2Middle {
 		return false;
 
 	}
+
 	// Fach
-	public static boolean createCourse(String name) {		
+	public static boolean createCourse(String name) {
 		try {
-		con = getConnection();
+			con = getConnection();
 
-		if (con != null) {
+			if (con != null) {
 
-			query = con.createStatement();
-			
-			String sqllast = "SELECT *  FROM fach ORDER BY fachnr DESC LIMIT 1";
-			ResultSet result = query.executeQuery(sqllast);
-			
-			while(result.next()){
-			String sql = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
-			int id = result.getInt(1) + 1;
-			PreparedStatement preparedStatement = con.prepareStatement(sql);
-			preparedStatement.setInt(1, id);
-			preparedStatement.setString(2, name);
-			preparedStatement.executeUpdate();
+				query = con.createStatement();
 
-			return true;}
-				
-				String sql1 = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
-				PreparedStatement preparedStatement1 = con.prepareStatement(sql1);
-				preparedStatement1.setInt(1, 1);
-				preparedStatement1.setString(2, name);
-				preparedStatement1.executeUpdate();
+				String sqllast = "SELECT *  FROM fach ORDER BY fachnr DESC LIMIT 1";
+				ResultSet result = query.executeQuery(sqllast);
+				String sql = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				while (result.next()) {
+
+					int id = result.getInt(1) + 1;
+
+					preparedStatement.setInt(1, id);
+					preparedStatement.setString(2, name);
+					preparedStatement.executeUpdate();
+
+					return true;
+				}
+
+				preparedStatement.setInt(1, 1);
+				preparedStatement.setString(2, name);
+				preparedStatement.executeUpdate();
 				return true;
 			}
-		
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
-	return false;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 
 	}
-
-
 
 	public ResultSet getAllCourses() {
 		return null;
