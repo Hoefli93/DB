@@ -239,9 +239,27 @@ public class DB2Middle {
 	}
 	
 
-	public ResultSet getAllLectures() {
-		return null;
+	public static ResultSet getAllLectures() {	
 
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				// Abfrage-Statement erzeugen.
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String sql = "SELECT * FROM vorlesung";
+				ResultSet result = query.executeQuery(sql);
+				while (result.next() == true)
+					System.out.println(result.getInt(1) + ","
+							+ result.getString(2)+","+result.getString(3) + ","+result.getString(4) + ","+result.getString(5));
+				return result;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	public ResultSet getLectureById(int id) {
@@ -299,10 +317,29 @@ public class DB2Middle {
 		return false;
 	}
 
-	public ResultSet getAllProfessors() {
-		return null;
+	public static ResultSet getAllProfessors() {
 
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				// Abfrage-Statement erzeugen.
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String sql = "SELECT * FROM dozent";
+				ResultSet result = query.executeQuery(sql);
+				while (result.next() == true)
+					System.out.println(result.getInt(1) + ","
+							+ result.getString(2)+","+result.getInt(3) + ","+result.getString(4) + ","+result.getString(5));
+				return result;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+		
 
 	public ResultSet getProfessorById(int id) {
 		return null;
@@ -356,10 +393,29 @@ public class DB2Middle {
 
 	}
 
-	public ResultSet getAllStudents() {
-		return null;
+	public static ResultSet getAllStudents() {
 
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				// Abfrage-Statement erzeugen.
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String sql = "SELECT * FROM student";
+				ResultSet result = query.executeQuery(sql);
+				while (result.next() == true)
+					System.out.println(result.getInt(1) + ","
+							+ result.getString(2)+","+result.getString(3) + ","+result.getString(4));
+				return result;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+		
 
 	public ResultSet getStudentById(int id) {
 		return null;
@@ -410,10 +466,27 @@ public class DB2Middle {
 
 	}
 
-	public ResultSet getAllCourses() {
-		return null;
+	public static ResultSet getAllCourses() {
+			try {
+				con = getConnection();
 
-	}
+				if (con != null) {
+
+					// Abfrage-Statement erzeugen.
+					query = con.createStatement();
+					// Tabelle anzeigen
+					String sql = "SELECT * FROM fach";
+					ResultSet result = query.executeQuery(sql);
+					while (result.next() == true)
+						System.out.println(result.getInt(1) + ","
+								+ result.getString(2));
+					return result;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
 
 	public ResultSet getCourseById(int id) {
 		return null;
