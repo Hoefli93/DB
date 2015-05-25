@@ -70,16 +70,20 @@ public class DB2Middle {
 
 				query = con.createStatement();
 
-				String sqllast = "SELECT raumnr,sitzplätze FROM raum ORDER BY raumnr DESC LIMIT 1";
+				String sqllast = "SELECT * FROM raum ORDER BY raumnr DESC LIMIT 1";
 				ResultSet result = query.executeQuery(sqllast);
-				result.next();
-				int id = result.getInt(1) + 1;
 				String sql = "INSERT INTO raum(raumnr,sitzplätze) VALUES(?,?)";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				preparedStatement.setInt(1, id);
+				
+				while (result.next()) {
+					int id = result.getInt(1) + 1;
+					preparedStatement.setInt(1, id);
+					preparedStatement.setInt(2, seats);
+					preparedStatement.executeUpdate();
+					return true;}
+				preparedStatement.setInt(1, 1);
 				preparedStatement.setInt(2, seats);
 				preparedStatement.executeUpdate();
-
 				return true;
 			}
 		} catch (SQLException e) {
@@ -196,11 +200,44 @@ public class DB2Middle {
 
 	// Vorlesung
 
-	public boolean createLecture(String name, int roomnr, int professornr,
-			int coursenr) {
+	public static boolean createLecture(String name, int roomnr, int professornr,int coursenr) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				query = con.createStatement();
+				
+		String sqllast = "SELECT *  FROM vorlesung ORDER BY vorlesungsnr DESC LIMIT 1";
+		ResultSet result = query.executeQuery(sqllast);
+		String sql = "INSERT INTO vorlesung(vorlesungsnr,name,raumnr,dozentnr,fachnr) VALUES(?,?,?,?,?)";
+		PreparedStatement preparedStatement = con.prepareStatement(sql);
+		
+		while (result.next()) {
+			int id = result.getInt(1) + 1;
+			preparedStatement.setInt(1, id);
+			preparedStatement.setString(2, name);
+			preparedStatement.setInt(3, roomnr);
+			preparedStatement.setInt(4, professornr);
+			preparedStatement.setInt(5, coursenr);
+			preparedStatement.executeUpdate();
+			
+			return true;}
+		preparedStatement.setInt(1, 1);
+		preparedStatement.setString(2, name);
+		preparedStatement.setInt(3, roomnr);
+		preparedStatement.setInt(4, professornr);
+		preparedStatement.setInt(5, coursenr);
+		preparedStatement.executeUpdate();
+		return true;
+			}} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 		return false;
 
 	}
+	
 
 	public ResultSet getAllLectures() {
 		return null;
@@ -225,10 +262,41 @@ public class DB2Middle {
 
 	// Professor
 
-	public boolean createProfessor(String name, String firstname, String email,
-			String tel) {
-		return false;
+	public static boolean createProfessor(String name, String firstname, String email,String tel) {
+		try {
+			con = getConnection();
 
+			if (con != null) {
+
+				query = con.createStatement();
+
+				String sqllast = "SELECT *  FROM dozent ORDER BY dozentnr DESC LIMIT 1";
+				ResultSet result = query.executeQuery(sqllast);
+				String sql = "INSERT INTO dozent(dozentnr,email,telefonnr,vorname,name) VALUES(?,?,?,?,?)";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				
+				while (result.next()) {
+					int id = result.getInt(1) + 1;
+					preparedStatement.setInt(1, id);
+					preparedStatement.setString(2, email);
+					preparedStatement.setString(3, tel);
+					preparedStatement.setString(4, firstname);
+					preparedStatement.setString(5, name);
+					preparedStatement.executeUpdate();
+					return true;
+					}
+				preparedStatement.setInt(1, 1);
+				preparedStatement.setString(2, email);
+				preparedStatement.setString(3, tel);
+				preparedStatement.setString(4, firstname);
+				preparedStatement.setString(5, name);
+				preparedStatement.executeUpdate();
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public ResultSet getAllProfessors() {
@@ -254,9 +322,36 @@ public class DB2Middle {
 
 	// Student
 
-	public boolean createStudent(int id, String name, String firstname,
-			String email) {
+	public static boolean createStudent(int id, String name, String firstname,String email) {
+		try {
+			con = getConnection();
 
+			if (con != null) {
+
+				query = con.createStatement();
+
+				String sqllast = "SELECT *  FROM student ORDER BY matrikelnr DESC LIMIT 1";
+				ResultSet result = query.executeQuery(sqllast);
+				String sql = "INSERT INTO student(matrikelnr,vorname,name,email) VALUES(?,?,?,?)";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				
+				while (result.next()) {
+					preparedStatement.setInt(1, id);
+					preparedStatement.setString(2, firstname);
+					preparedStatement.setString(3, name);
+					preparedStatement.setString(4, email);
+					preparedStatement.executeUpdate();
+					return true;}
+				preparedStatement.setInt(1, id);
+				preparedStatement.setString(2, firstname);
+				preparedStatement.setString(3, name);
+				preparedStatement.setString(4, email);
+				preparedStatement.executeUpdate();
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
 
 	}
@@ -295,17 +390,13 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sqllast);
 				String sql = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				
 				while (result.next()) {
-
 					int id = result.getInt(1) + 1;
-
 					preparedStatement.setInt(1, id);
 					preparedStatement.setString(2, name);
 					preparedStatement.executeUpdate();
-
-					return true;
-				}
-
+					return true;}
 				preparedStatement.setInt(1, 1);
 				preparedStatement.setString(2, name);
 				preparedStatement.executeUpdate();
