@@ -185,9 +185,9 @@ public class DB2Middle {
 			if (con != null) {
 
 				ResultSet rs = getRoomById(id);
-				// Abfrage-Statement erzeugen.
+				
 				query = con.createStatement();
-				// Tabelle anzeigen
+				
 				String sql = "DELETE FROM raum WHERE raumnr=" + rs.getString(1);
 				query.executeUpdate(sql);
 			}
@@ -262,22 +262,86 @@ public class DB2Middle {
 		return null;
 	}
 
-	public ResultSet getLectureById(int id) {
+	public static ResultSet getLectureById(int id) {
+
+		try {
+			con = getConnection();
+
+			if (con != null) {
+				// Abfrage-Statement erzeugen.
+
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String string = String.valueOf(id);
+				String sql = "SELECT vorlesungsnr,name,raumnr,dozentnr,fachnr FROM vorlesung where vorlesungsnr="+ string;
+
+				ResultSet result = query.executeQuery(sql);
+				result.next();
+
+				return result;
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
-
 	}
+	
+	public static boolean editLecture(int id, String name, int roomnr,int professornr, int coursenr) {
+		try {
+			con = getConnection();
 
-	public boolean editLecture(int id, String name, int roomnr,
-			int professornr, int coursenr) {
+			if (con != null) {
+
+				ResultSet rs = getLectureById(id);
+				String sql = "SELECT * FROM vorlesung WHERE vorlesungsnr = "+ rs.getString(1);
+				// PreparedStatement erzeugen.
+
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				// Ergebnistabelle erzeugen und abholen.
+				String updateSql = "UPDATE vorlesung "
+						+ "SET vorlesungsnr = ?, name = ? , raumnr = ?, dozentnr = ? , fachnr = ? "
+						+ "WHERE vorlesungsnr = ?";
+				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
+				
+				preparedUpdateStatement.setInt(1, id);
+				preparedUpdateStatement.setString(2, name);
+				preparedUpdateStatement.setInt(3, roomnr);
+				preparedUpdateStatement.setInt(4, professornr);
+				preparedUpdateStatement.setInt(5, coursenr);
+				preparedUpdateStatement.setInt(6, id);
+				
+
+				preparedUpdateStatement.executeUpdate();
+
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
 
-	public boolean deleteLectureById(int id) {
+	public static boolean deleteLectureById(int id) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getLectureById(id);
+				
+				query = con.createStatement();
+				
+				String sql = "DELETE FROM vorlesung WHERE vorlesungsnr=" + rs.getString(1);
+				query.executeUpdate(sql);
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
-
+		
 	// Professor
 
 	public static boolean createProfessor(String name, String firstname, String email,String tel) {
@@ -341,21 +405,86 @@ public class DB2Middle {
 	}
 		
 
-	public ResultSet getProfessorById(int id) {
+	public static ResultSet getProfessorById(int id) {
+
+		try {
+			con = getConnection();
+
+			if (con != null) {
+				// Abfrage-Statement erzeugen.
+
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String string = String.valueOf(id);
+				String sql = "SELECT dozentnr,email,telefonnr,vorname,name FROM dozent where dozentnr="+ string;
+
+				ResultSet result = query.executeQuery(sql);
+				result.next();
+
+				return result;
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
-
 	}
+		
 
-	public boolean editProfessor(int id, String name, String firstname,
-			String email, String tel) {
+	public static boolean editProfessor(int id, String name, String firstname,String email, String tel) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getProfessorById(id);
+				String sql = "SELECT * FROM dozent WHERE dozentnr = "+ rs.getString(1);
+				
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+			
+				String updateSql = "UPDATE dozent "
+						+ "SET dozentnr = ?, email=?, telefonnr=?,vorname = ?, name = ?"
+						+ "WHERE dozentnr = ?";
+				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
+				
+				preparedUpdateStatement.setInt(1, id);
+				preparedUpdateStatement.setString(2, email);
+				preparedUpdateStatement.setString(3, tel);
+				preparedUpdateStatement.setString(4, firstname);
+				preparedUpdateStatement.setString(5, name);
+				preparedUpdateStatement.setInt(6, id);
+				
+				preparedUpdateStatement.executeUpdate();
+
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
+		
 
-	public boolean deleteProfessorById(int id) {
+	public static boolean deleteProfessorById(int id) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getProfessorById(id);
+				
+				query = con.createStatement();
+				
+				String sql = "DELETE FROM dozent WHERE dozentnr=" + rs.getString(1);
+				query.executeUpdate(sql);
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
+		
 
 	// Student
 
@@ -417,22 +546,84 @@ public class DB2Middle {
 	}
 		
 
-	public ResultSet getStudentById(int id) {
+	public static ResultSet getStudentById(int id) {
+
+		try {
+			con = getConnection();
+
+			if (con != null) {
+				// Abfrage-Statement erzeugen.
+
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String string = String.valueOf(id);
+				String sql = "SELECT matrikelnr,vorname,name,email FROM student where matrikelnr="+ string;
+
+				ResultSet result = query.executeQuery(sql);
+				result.next();
+
+				return result;
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
-
 	}
+		
 
-	public boolean editStudent(int id, String name, String firstname,
-			String email) {
+	public static boolean editStudent(int id, String name, String firstname,String email) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getStudentById(id);
+				String sql = "SELECT * FROM student WHERE matrikelnr = "+ rs.getString(1);
+				
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+				String string = String.valueOf(id);
+				String updateSql = "UPDATE student "
+				+ "SET matrikelnr = ?, vorname=?, name=?,email = ? WHERE matrikelnr = ?";
+				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
+				
+				preparedUpdateStatement.setInt(1, id);
+				preparedUpdateStatement.setString(2, firstname);
+				preparedUpdateStatement.setString(3, name);
+				preparedUpdateStatement.setString(4, email);
+				preparedUpdateStatement.setInt(5, id);
+				
+				preparedUpdateStatement.executeUpdate();
+
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
+		
 
-	public boolean deleteStudentById(int id) {
+	public static boolean deleteStudentById(int id) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getStudentById(id);
+				
+				query = con.createStatement();
+				
+				String sql = "DELETE FROM student WHERE matrikelnr=" + rs.getString(1);
+				query.executeUpdate(sql);
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
-
+		
 	// Fach
 	public static boolean createCourse(String name) {
 		try {
@@ -488,18 +679,85 @@ public class DB2Middle {
 			return null;
 		}
 
-	public ResultSet getCourseById(int id) {
+	public static ResultSet getCourseById(int id) {
+
+		try {
+			con = getConnection();
+
+			if (con != null) {
+				// Abfrage-Statement erzeugen.
+
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String string = String.valueOf(id);
+				String sql = "SELECT fachnr,name FROM fach where fachnr="+ string;
+
+				ResultSet result = query.executeQuery(sql);
+				result.next();
+
+				return result;
+
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return null;
-
 	}
 
-	public boolean editCourse(int id, String name) {
+	public static boolean editCourse(int id, String name) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getCourseById(id);
+				String sql = "SELECT * FROM fach WHERE fachnr = ?"+ rs.getString(1);
+				// PreparedStatement erzeugen.
+
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+
+				// Ergebnistabelle erzeugen und abholen.
+				String updateSql = "UPDATE fach "
+						+ "SET fachnr = ?, name = ? "
+						+ "WHERE fachnr = ?";
+				PreparedStatement preparedUpdateStatement = con
+						.prepareStatement(updateSql);
+				// Erstes Fragezeichen durch "id" Parameter ersetzen
+				preparedUpdateStatement.setInt(1, id);
+				// Zweites Fragezeichen durch "seats" Parameter ersetzen
+				preparedUpdateStatement.setString(2, name);
+				// Drittes Fragezeichen durch "id" Parameter ersetzen
+				preparedUpdateStatement.setInt(3, id);
+
+				preparedUpdateStatement.executeUpdate();
+
+				return true;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
+		
 
-	public boolean deleteCourseById(int id) {
+	public static boolean deleteCourseById(int id) {
+		try {
+			con = getConnection();
+
+			if (con != null) {
+
+				ResultSet rs = getCourseById(id);
+				
+				query = con.createStatement();
+				
+				String sql = "DELETE FROM fach WHERE fachnr=" + rs.getString(1);
+				query.executeUpdate(sql);
+			}
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-
 	}
+		
 }
