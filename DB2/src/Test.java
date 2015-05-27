@@ -5,14 +5,14 @@ public class Test {
 
 	public static void main(String[] args) throws SQLException {
 
-		
-	/*   DB2Middle.getAllRooms();
-		 DB2Middle.getAllCourses();
+		DB2Middle.createRoom(20);
+	   DB2Middle.getAllRooms();
+	/*	 DB2Middle.getAllCourses();
 		 DB2Middle.getAllLectures();
 		 DB2Middle.getAllProfessors();
 		 DB2Middle.getAllStudents();	
 		
-		DB2Middle.createRoom(20);
+		
 		DB2Middle.createCourse("VAR"); 
 		DB2Middle.createLecture("ST", 4, 5, 5);
 		DB2Middle.createStudent(1320733, "Höfler", "Timo", "t.hoefler@hs-ma.de");

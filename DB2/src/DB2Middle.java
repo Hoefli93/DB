@@ -1,3 +1,11 @@
+/**
+ * @author 
+ * Timo Höfler
+ * 1320733
+ * db212
+ * 
+ */
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -13,6 +21,8 @@ public class DB2Middle {
 	private static String dbUser = "db212"; // Datenbankuser
 	private static String dbPass = "arparili"; // Datenbankpasswort
 	private static Statement query;
+	private static PreparedStatement preparedStatement;
+
 
 	private DB2Middle() {
 		try {
@@ -33,64 +43,27 @@ public class DB2Middle {
 		}
 	}
 
-	private static Connection getConnection() throws SQLException {
+	public static Connection getConnection() throws SQLException {
 		if (con == null)
 			new DB2Middle();
 		return con;
 	}
 
-	/*
-	 * public static void printNameList() { try { con = getConnection();
-	 * 
-	 * if(con != null){ // Abfrage-Statement erzeugen. Statement query;
-	 * 
-	 * query = con.createStatement();
-	 * 
-	 * // Tabelle anzeigen String sql ="SELECT RaumNr,Sitzplätze FROM Raum";
-	 * ResultSet result = query.executeQuery(sql);
-	 * 
-	 * // Ergebnisstabelle durchforsten
-	 * 
-	 * while (result.next()) { String RaumNr =result.getString("RaumNr"); String
-	 * Sitzplätze =result.getString("Sitzplätze");
-	 * 
-	 * String info = RaumNr+ ", " + Sitzplätze ;
-	 * 
-	 * System.out.println(info); } return;}} catch (SQLException e) {
-	 * e.printStackTrace(); } }
-	 */
-
-	// Raum
-
 	public static boolean createRoom(int seats) {
 		try {
 			con = getConnection();
-
 			if (con != null) {
-
 				query = con.createStatement();
+				String sql = "INSERT INTO raum(raumnr,sitzplätze) VALUES(1,"+String.valueOf(seats)+")";
+				ResultSet result = query.executeQuery(sql);
+				query.executeUpdate(sql, 0);
 
-				String sqllast = "SELECT * FROM raum ORDER BY raumnr DESC LIMIT 1";
-				ResultSet result = query.executeQuery(sqllast);
-				String sql = "INSERT INTO raum(raumnr,sitzplätze) VALUES(?,?)";
-				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				
-				while (result.next()) {
-					int id = result.getInt(1) + 1;
-					preparedStatement.setInt(1, id);
-					preparedStatement.setInt(2, seats);
-					preparedStatement.executeUpdate();
-					return true;}
-				preparedStatement.setInt(1, 1);
-				preparedStatement.setInt(2, seats);
-				preparedStatement.executeUpdate();
 				return true;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
-
 	}
 
 	public static ResultSet getAllRooms() {
@@ -116,16 +89,15 @@ public class DB2Middle {
 		return null;
 	}
 
-	public static ResultSet getRoomById(int id) {
+	public ResultSet getRoomById(int id) {
 
 		try {
 			con = getConnection();
 
 			if (con != null) {
-				// Abfrage-Statement erzeugen.
 
 				query = con.createStatement();
-				// Tabelle anzeigen
+
 				String string = String.valueOf(id);
 				String sql = "SELECT raumnr,sitzplätze FROM raum where raumnr="
 						+ string;
@@ -142,7 +114,7 @@ public class DB2Middle {
 		return null;
 	}
 
-	public static boolean editRoom(int id, int seats) {
+	public boolean editRoom(int id, int seats) {
 		try {
 			con = getConnection();
 
@@ -178,16 +150,16 @@ public class DB2Middle {
 		return false;
 	}
 
-	public static boolean deleteRoomById(int id) {
+	public boolean deleteRoomById(int id) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getRoomById(id);
-				
+
 				query = con.createStatement();
-				
+
 				String sql = "DELETE FROM raum WHERE raumnr=" + rs.getString(1);
 				query.executeUpdate(sql);
 			}
@@ -200,46 +172,48 @@ public class DB2Middle {
 
 	// Vorlesung
 
-	public static boolean createLecture(String name, int roomnr, int professornr,int coursenr) {
+	public boolean createLecture(String name, int roomnr, int professornr,
+			int coursenr) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				query = con.createStatement();
-				
-		String sqllast = "SELECT *  FROM vorlesung ORDER BY vorlesungsnr DESC LIMIT 1";
-		ResultSet result = query.executeQuery(sqllast);
-		String sql = "INSERT INTO vorlesung(vorlesungsnr,name,raumnr,dozentnr,fachnr) VALUES(?,?,?,?,?)";
-		PreparedStatement preparedStatement = con.prepareStatement(sql);
-		
-		while (result.next()) {
-			int id = result.getInt(1) + 1;
-			preparedStatement.setInt(1, id);
-			preparedStatement.setString(2, name);
-			preparedStatement.setInt(3, roomnr);
-			preparedStatement.setInt(4, professornr);
-			preparedStatement.setInt(5, coursenr);
-			preparedStatement.executeUpdate();
-			
-			return true;}
-		preparedStatement.setInt(1, 1);
-		preparedStatement.setString(2, name);
-		preparedStatement.setInt(3, roomnr);
-		preparedStatement.setInt(4, professornr);
-		preparedStatement.setInt(5, coursenr);
-		preparedStatement.executeUpdate();
-		return true;
-			}} catch (SQLException e) {
-			
+
+				String sqllast = "SELECT *  FROM vorlesung ORDER BY vorlesungsnr DESC LIMIT 1";
+				ResultSet result = query.executeQuery(sqllast);
+				String sql = "INSERT INTO vorlesung(vorlesungsnr,name,raumnr,dozentnr,fachnr) VALUES(?,?,?,?,?)";
+				PreparedStatement preparedStatement = con.prepareStatement(sql);
+
+				while (result.next()) {
+					int id = result.getInt(1) + 1;
+					preparedStatement.setInt(1, id);
+					preparedStatement.setString(2, name);
+					preparedStatement.setInt(3, roomnr);
+					preparedStatement.setInt(4, professornr);
+					preparedStatement.setInt(5, coursenr);
+					preparedStatement.executeUpdate();
+
+					return true;
+				}
+				preparedStatement.setInt(1, 1);
+				preparedStatement.setString(2, name);
+				preparedStatement.setInt(3, roomnr);
+				preparedStatement.setInt(4, professornr);
+				preparedStatement.setInt(5, coursenr);
+				preparedStatement.executeUpdate();
+				return true;
+			}
+		} catch (SQLException e) {
+
 			e.printStackTrace();
 		}
 		return false;
 
 	}
-	
 
-	public static ResultSet getAllLectures() {	
+	public ResultSet getAllLectures() {
 
 		try {
 			con = getConnection();
@@ -253,7 +227,9 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sql);
 				while (result.next() == true)
 					System.out.println(result.getInt(1) + ","
-							+ result.getString(2)+","+result.getString(3) + ","+result.getString(4) + ","+result.getString(5));
+							+ result.getString(2) + "," + result.getString(3)
+							+ "," + result.getString(4) + ","
+							+ result.getString(5));
 				return result;
 			}
 		} catch (SQLException e) {
@@ -262,7 +238,7 @@ public class DB2Middle {
 		return null;
 	}
 
-	public static ResultSet getLectureById(int id) {
+	public ResultSet getLectureById(int id) {
 
 		try {
 			con = getConnection();
@@ -273,7 +249,8 @@ public class DB2Middle {
 				query = con.createStatement();
 				// Tabelle anzeigen
 				String string = String.valueOf(id);
-				String sql = "SELECT vorlesungsnr,name,raumnr,dozentnr,fachnr FROM vorlesung where vorlesungsnr="+ string;
+				String sql = "SELECT vorlesungsnr,name,raumnr,dozentnr,fachnr FROM vorlesung where vorlesungsnr="
+						+ string;
 
 				ResultSet result = query.executeQuery(sql);
 				result.next();
@@ -286,15 +263,17 @@ public class DB2Middle {
 		}
 		return null;
 	}
-	
-	public static boolean editLecture(int id, String name, int roomnr,int professornr, int coursenr) {
+
+	public boolean editLecture(int id, String name, int roomnr,
+			int professornr, int coursenr) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getLectureById(id);
-				String sql = "SELECT * FROM vorlesung WHERE vorlesungsnr = "+ rs.getString(1);
+				String sql = "SELECT * FROM vorlesung WHERE vorlesungsnr = "
+						+ rs.getString(1);
 				// PreparedStatement erzeugen.
 
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
@@ -302,15 +281,15 @@ public class DB2Middle {
 				String updateSql = "UPDATE vorlesung "
 						+ "SET vorlesungsnr = ?, name = ? , raumnr = ?, dozentnr = ? , fachnr = ? "
 						+ "WHERE vorlesungsnr = ?";
-				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
-				
+				PreparedStatement preparedUpdateStatement = con
+						.prepareStatement(updateSql);
+
 				preparedUpdateStatement.setInt(1, id);
 				preparedUpdateStatement.setString(2, name);
 				preparedUpdateStatement.setInt(3, roomnr);
 				preparedUpdateStatement.setInt(4, professornr);
 				preparedUpdateStatement.setInt(5, coursenr);
 				preparedUpdateStatement.setInt(6, id);
-				
 
 				preparedUpdateStatement.executeUpdate();
 
@@ -322,17 +301,18 @@ public class DB2Middle {
 		return false;
 	}
 
-	public static boolean deleteLectureById(int id) {
+	public boolean deleteLectureById(int id) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getLectureById(id);
-				
+
 				query = con.createStatement();
-				
-				String sql = "DELETE FROM vorlesung WHERE vorlesungsnr=" + rs.getString(1);
+
+				String sql = "DELETE FROM vorlesung WHERE vorlesungsnr="
+						+ rs.getString(1);
 				query.executeUpdate(sql);
 			}
 			return true;
@@ -341,10 +321,11 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
+
 	// Professor
 
-	public static boolean createProfessor(String name, String firstname, String email,String tel) {
+	public boolean createProfessor(String name, String firstname, String email,
+			String tel) {
 		try {
 			con = getConnection();
 
@@ -356,7 +337,7 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sqllast);
 				String sql = "INSERT INTO dozent(dozentnr,email,telefonnr,vorname,name) VALUES(?,?,?,?,?)";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				
+
 				while (result.next()) {
 					int id = result.getInt(1) + 1;
 					preparedStatement.setInt(1, id);
@@ -366,7 +347,7 @@ public class DB2Middle {
 					preparedStatement.setString(5, name);
 					preparedStatement.executeUpdate();
 					return true;
-					}
+				}
 				preparedStatement.setInt(1, 1);
 				preparedStatement.setString(2, email);
 				preparedStatement.setString(3, tel);
@@ -381,7 +362,7 @@ public class DB2Middle {
 		return false;
 	}
 
-	public static ResultSet getAllProfessors() {
+	public ResultSet getAllProfessors() {
 
 		try {
 			con = getConnection();
@@ -395,7 +376,9 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sql);
 				while (result.next() == true)
 					System.out.println(result.getInt(1) + ","
-							+ result.getString(2)+","+result.getInt(3) + ","+result.getString(4) + ","+result.getString(5));
+							+ result.getString(2) + "," + result.getInt(3)
+							+ "," + result.getString(4) + ","
+							+ result.getString(5));
 				return result;
 			}
 		} catch (SQLException e) {
@@ -403,9 +386,8 @@ public class DB2Middle {
 		}
 		return null;
 	}
-		
 
-	public static ResultSet getProfessorById(int id) {
+	public ResultSet getProfessorById(int id) {
 
 		try {
 			con = getConnection();
@@ -416,7 +398,8 @@ public class DB2Middle {
 				query = con.createStatement();
 				// Tabelle anzeigen
 				String string = String.valueOf(id);
-				String sql = "SELECT dozentnr,email,telefonnr,vorname,name FROM dozent where dozentnr="+ string;
+				String sql = "SELECT dozentnr,email,telefonnr,vorname,name FROM dozent where dozentnr="
+						+ string;
 
 				ResultSet result = query.executeQuery(sql);
 				result.next();
@@ -429,31 +412,33 @@ public class DB2Middle {
 		}
 		return null;
 	}
-		
 
-	public static boolean editProfessor(int id, String name, String firstname,String email, String tel) {
+	public boolean editProfessor(int id, String name, String firstname,
+			String email, String tel) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getProfessorById(id);
-				String sql = "SELECT * FROM dozent WHERE dozentnr = "+ rs.getString(1);
-				
+				String sql = "SELECT * FROM dozent WHERE dozentnr = "
+						+ rs.getString(1);
+
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-			
+
 				String updateSql = "UPDATE dozent "
 						+ "SET dozentnr = ?, email=?, telefonnr=?,vorname = ?, name = ?"
 						+ "WHERE dozentnr = ?";
-				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
-				
+				PreparedStatement preparedUpdateStatement = con
+						.prepareStatement(updateSql);
+
 				preparedUpdateStatement.setInt(1, id);
 				preparedUpdateStatement.setString(2, email);
 				preparedUpdateStatement.setString(3, tel);
 				preparedUpdateStatement.setString(4, firstname);
 				preparedUpdateStatement.setString(5, name);
 				preparedUpdateStatement.setInt(6, id);
-				
+
 				preparedUpdateStatement.executeUpdate();
 
 				return true;
@@ -463,19 +448,19 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
 
-	public static boolean deleteProfessorById(int id) {
+	public boolean deleteProfessorById(int id) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getProfessorById(id);
-				
+
 				query = con.createStatement();
-				
-				String sql = "DELETE FROM dozent WHERE dozentnr=" + rs.getString(1);
+
+				String sql = "DELETE FROM dozent WHERE dozentnr="
+						+ rs.getString(1);
 				query.executeUpdate(sql);
 			}
 			return true;
@@ -484,11 +469,11 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
 
 	// Student
 
-	public static boolean createStudent(int id, String name, String firstname,String email) {
+	public boolean createStudent(int id, String name, String firstname,
+			String email) {
 		try {
 			con = getConnection();
 
@@ -500,14 +485,15 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sqllast);
 				String sql = "INSERT INTO student(matrikelnr,vorname,name,email) VALUES(?,?,?,?)";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				
+
 				while (result.next()) {
 					preparedStatement.setInt(1, id);
 					preparedStatement.setString(2, firstname);
 					preparedStatement.setString(3, name);
 					preparedStatement.setString(4, email);
 					preparedStatement.executeUpdate();
-					return true;}
+					return true;
+				}
 				preparedStatement.setInt(1, id);
 				preparedStatement.setString(2, firstname);
 				preparedStatement.setString(3, name);
@@ -522,7 +508,7 @@ public class DB2Middle {
 
 	}
 
-	public static ResultSet getAllStudents() {
+	public ResultSet getAllStudents() {
 
 		try {
 			con = getConnection();
@@ -536,7 +522,8 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sql);
 				while (result.next() == true)
 					System.out.println(result.getInt(1) + ","
-							+ result.getString(2)+","+result.getString(3) + ","+result.getString(4));
+							+ result.getString(2) + "," + result.getString(3)
+							+ "," + result.getString(4));
 				return result;
 			}
 		} catch (SQLException e) {
@@ -544,9 +531,8 @@ public class DB2Middle {
 		}
 		return null;
 	}
-		
 
-	public static ResultSet getStudentById(int id) {
+	public ResultSet getStudentById(int id) {
 
 		try {
 			con = getConnection();
@@ -557,7 +543,8 @@ public class DB2Middle {
 				query = con.createStatement();
 				// Tabelle anzeigen
 				String string = String.valueOf(id);
-				String sql = "SELECT matrikelnr,vorname,name,email FROM student where matrikelnr="+ string;
+				String sql = "SELECT matrikelnr,vorname,name,email FROM student where matrikelnr="
+						+ string;
 
 				ResultSet result = query.executeQuery(sql);
 				result.next();
@@ -570,29 +557,31 @@ public class DB2Middle {
 		}
 		return null;
 	}
-		
 
-	public static boolean editStudent(int id, String name, String firstname,String email) {
+	public boolean editStudent(int id, String name, String firstname,
+			String email) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getStudentById(id);
-				String sql = "SELECT * FROM student WHERE matrikelnr = "+ rs.getString(1);
-				
+				String sql = "SELECT * FROM student WHERE matrikelnr = "
+						+ rs.getString(1);
+
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
 				String string = String.valueOf(id);
 				String updateSql = "UPDATE student "
-				+ "SET matrikelnr = ?, vorname=?, name=?,email = ? WHERE matrikelnr = ?";
-				PreparedStatement preparedUpdateStatement = con.prepareStatement(updateSql);
-				
+						+ "SET matrikelnr = ?, vorname=?, name=?,email = ? WHERE matrikelnr = ?";
+				PreparedStatement preparedUpdateStatement = con
+						.prepareStatement(updateSql);
+
 				preparedUpdateStatement.setInt(1, id);
 				preparedUpdateStatement.setString(2, firstname);
 				preparedUpdateStatement.setString(3, name);
 				preparedUpdateStatement.setString(4, email);
 				preparedUpdateStatement.setInt(5, id);
-				
+
 				preparedUpdateStatement.executeUpdate();
 
 				return true;
@@ -602,19 +591,19 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
 
-	public static boolean deleteStudentById(int id) {
+	public boolean deleteStudentById(int id) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getStudentById(id);
-				
+
 				query = con.createStatement();
-				
-				String sql = "DELETE FROM student WHERE matrikelnr=" + rs.getString(1);
+
+				String sql = "DELETE FROM student WHERE matrikelnr="
+						+ rs.getString(1);
 				query.executeUpdate(sql);
 			}
 			return true;
@@ -623,9 +612,9 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
+
 	// Fach
-	public static boolean createCourse(String name) {
+	public boolean createCourse(String name) {
 		try {
 			con = getConnection();
 
@@ -637,13 +626,14 @@ public class DB2Middle {
 				ResultSet result = query.executeQuery(sqllast);
 				String sql = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
-				
+
 				while (result.next()) {
 					int id = result.getInt(1) + 1;
 					preparedStatement.setInt(1, id);
 					preparedStatement.setString(2, name);
 					preparedStatement.executeUpdate();
-					return true;}
+					return true;
+				}
 				preparedStatement.setInt(1, 1);
 				preparedStatement.setString(2, name);
 				preparedStatement.executeUpdate();
@@ -657,29 +647,29 @@ public class DB2Middle {
 
 	}
 
-	public static ResultSet getAllCourses() {
-			try {
-				con = getConnection();
+	public ResultSet getAllCourses() {
+		try {
+			con = getConnection();
 
-				if (con != null) {
+			if (con != null) {
 
-					// Abfrage-Statement erzeugen.
-					query = con.createStatement();
-					// Tabelle anzeigen
-					String sql = "SELECT * FROM fach";
-					ResultSet result = query.executeQuery(sql);
-					while (result.next() == true)
-						System.out.println(result.getInt(1) + ","
-								+ result.getString(2));
-					return result;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+				// Abfrage-Statement erzeugen.
+				query = con.createStatement();
+				// Tabelle anzeigen
+				String sql = "SELECT * FROM fach";
+				ResultSet result = query.executeQuery(sql);
+				while (result.next() == true)
+					System.out.println(result.getInt(1) + ","
+							+ result.getString(2));
+				return result;
 			}
-			return null;
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
+		return null;
+	}
 
-	public static ResultSet getCourseById(int id) {
+	public ResultSet getCourseById(int id) {
 
 		try {
 			con = getConnection();
@@ -690,7 +680,8 @@ public class DB2Middle {
 				query = con.createStatement();
 				// Tabelle anzeigen
 				String string = String.valueOf(id);
-				String sql = "SELECT fachnr,name FROM fach where fachnr="+ string;
+				String sql = "SELECT fachnr,name FROM fach where fachnr="
+						+ string;
 
 				ResultSet result = query.executeQuery(sql);
 				result.next();
@@ -704,21 +695,26 @@ public class DB2Middle {
 		return null;
 	}
 
-	public static boolean editCourse(int id, String name) {
+	/**
+	 * @author 1320733
+	 * 
+	 */
+
+	public boolean editCourse(int id, String name) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getCourseById(id);
-				String sql = "SELECT * FROM fach WHERE fachnr = ?"+ rs.getString(1);
+				String sql = "SELECT * FROM fach WHERE fachnr = ?"
+						+ rs.getString(1);
 				// PreparedStatement erzeugen.
 
 				PreparedStatement preparedStatement = con.prepareStatement(sql);
 
 				// Ergebnistabelle erzeugen und abholen.
-				String updateSql = "UPDATE fach "
-						+ "SET fachnr = ?, name = ? "
+				String updateSql = "UPDATE fach " + "SET fachnr = ?, name = ? "
 						+ "WHERE fachnr = ?";
 				PreparedStatement preparedUpdateStatement = con
 						.prepareStatement(updateSql);
@@ -738,18 +734,17 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
 
-	public static boolean deleteCourseById(int id) {
+	public boolean deleteCourseById(int id) {
 		try {
 			con = getConnection();
 
 			if (con != null) {
 
 				ResultSet rs = getCourseById(id);
-				
+
 				query = con.createStatement();
-				
+
 				String sql = "DELETE FROM fach WHERE fachnr=" + rs.getString(1);
 				query.executeUpdate(sql);
 			}
@@ -759,5 +754,5 @@ public class DB2Middle {
 		}
 		return false;
 	}
-		
+
 }
