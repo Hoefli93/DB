@@ -4,10 +4,10 @@ import java.sql.SQLException;
 public class Test {
 
 	public static void main(String[] args) throws SQLException {
-
-		DB2Middle.createRoom(20);
+		DB2Middle.createRoom(40);
+		/*
 	   DB2Middle.getAllRooms();
-	/*	 DB2Middle.getAllCourses();
+		 DB2Middle.getAllCourses();
 		 DB2Middle.getAllLectures();
 		 DB2Middle.getAllProfessors();
 		 DB2Middle.getAllStudents();	

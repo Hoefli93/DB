@@ -54,12 +54,9 @@ public class DB2Middle {
 			con = getConnection();
 			if (con != null) {
 				query = con.createStatement();
-				String sql = "INSERT INTO raum(raumnr,sitzplätze) VALUES(1,"+String.valueOf(seats)+")";
-				ResultSet result = query.executeQuery(sql);
-				query.executeUpdate(sql, 0);
-
-				return true;
-			}
+				String sql = "INSERT INTO raum(sitzplätze) VALUES("+String.valueOf(seats)+")";
+				query.executeUpdate(sql);
+				return true;}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
