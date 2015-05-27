@@ -4,8 +4,8 @@ import java.sql.SQLException;
 public class Test {
 
 	public static void main(String[] args) throws SQLException {
-		DB2Middle.createRoom(40);
-		/*
+		/*DB2Middle.createRoom(40);
+		
 	   DB2Middle.getAllRooms();
 		 DB2Middle.getAllCourses();
 		 DB2Middle.getAllLectures();

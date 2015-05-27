@@ -23,7 +23,6 @@ public class DB2Middle {
 	private static Statement query;
 	private static PreparedStatement preparedStatement;
 
-
 	private DB2Middle() {
 		try {
 			Class.forName("com.mysql.jdbc.Driver"); // Datenbanktreiber für JDBC
@@ -49,21 +48,22 @@ public class DB2Middle {
 		return con;
 	}
 
-	public static boolean createRoom(int seats) {
+	public boolean createRoom(int seats) {
 		try {
 			con = getConnection();
 			if (con != null) {
 				query = con.createStatement();
-				String sql = "INSERT INTO raum(sitzplätze) VALUES("+String.valueOf(seats)+")";
+				String sql = "INSERT INTO raum(sitzplätze) VALUES("+ seats +")";
 				query.executeUpdate(sql);
-				return true;}
+				return true;
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
 
-	public static ResultSet getAllRooms() {
+	public ResultSet getAllRooms() {
 
 		try {
 			con = getConnection();
@@ -169,45 +169,20 @@ public class DB2Middle {
 
 	// Vorlesung
 
-	public boolean createLecture(String name, int roomnr, int professornr,
-			int coursenr) {
+	public boolean createLecture(String name, int roomnr, int professornr,int coursenr) {
 		try {
 			con = getConnection();
-
 			if (con != null) {
-
 				query = con.createStatement();
-
-				String sqllast = "SELECT *  FROM vorlesung ORDER BY vorlesungsnr DESC LIMIT 1";
-				ResultSet result = query.executeQuery(sqllast);
-				String sql = "INSERT INTO vorlesung(vorlesungsnr,name,raumnr,dozentnr,fachnr) VALUES(?,?,?,?,?)";
-				PreparedStatement preparedStatement = con.prepareStatement(sql);
-
-				while (result.next()) {
-					int id = result.getInt(1) + 1;
-					preparedStatement.setInt(1, id);
-					preparedStatement.setString(2, name);
-					preparedStatement.setInt(3, roomnr);
-					preparedStatement.setInt(4, professornr);
-					preparedStatement.setInt(5, coursenr);
-					preparedStatement.executeUpdate();
-
-					return true;
-				}
-				preparedStatement.setInt(1, 1);
-				preparedStatement.setString(2, name);
-				preparedStatement.setInt(3, roomnr);
-				preparedStatement.setInt(4, professornr);
-				preparedStatement.setInt(5, coursenr);
-				preparedStatement.executeUpdate();
+				String sql = "INSERT INTO vorlesung(name,raumnr,dozentnr,fachnr)"
+						+ "VALUES("+name +","+roomnr+","+ professornr+ ","+coursenr+")";
+				query.executeUpdate(sql);
 				return true;
 			}
 		} catch (SQLException e) {
-
 			e.printStackTrace();
 		}
 		return false;
-
 	}
 
 	public ResultSet getAllLectures() {
@@ -321,43 +296,21 @@ public class DB2Middle {
 
 	// Professor
 
-	public boolean createProfessor(String name, String firstname, String email,
-			String tel) {
-		try {
-			con = getConnection();
-
-			if (con != null) {
-
-				query = con.createStatement();
-
-				String sqllast = "SELECT *  FROM dozent ORDER BY dozentnr DESC LIMIT 1";
-				ResultSet result = query.executeQuery(sqllast);
-				String sql = "INSERT INTO dozent(dozentnr,email,telefonnr,vorname,name) VALUES(?,?,?,?,?)";
-				PreparedStatement preparedStatement = con.prepareStatement(sql);
-
-				while (result.next()) {
-					int id = result.getInt(1) + 1;
-					preparedStatement.setInt(1, id);
-					preparedStatement.setString(2, email);
-					preparedStatement.setString(3, tel);
-					preparedStatement.setString(4, firstname);
-					preparedStatement.setString(5, name);
-					preparedStatement.executeUpdate();
-					return true;
+	public boolean createProfessor(String name, String firstname, String email,String tel) {
+				try {
+					con = getConnection();
+					if (con != null) {
+						query = con.createStatement();
+						String sql = "INSERT INTO dozent(email,telefonnr,vorname,name) "
+								+ "VALUES("+email+","+ tel+","+firstname+","+name + ")";
+						query.executeUpdate(sql);
+						return true;
+					}
+				} catch (SQLException e) {
+					e.printStackTrace();
 				}
-				preparedStatement.setInt(1, 1);
-				preparedStatement.setString(2, email);
-				preparedStatement.setString(3, tel);
-				preparedStatement.setString(4, firstname);
-				preparedStatement.setString(5, name);
-				preparedStatement.executeUpdate();
-				return true;
+				return false;
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		return false;
-	}
 
 	public ResultSet getAllProfessors() {
 
@@ -469,42 +422,22 @@ public class DB2Middle {
 
 	// Student
 
-	public boolean createStudent(int id, String name, String firstname,
-			String email) {
-		try {
-			con = getConnection();
-
-			if (con != null) {
-
-				query = con.createStatement();
-
-				String sqllast = "SELECT *  FROM student ORDER BY matrikelnr DESC LIMIT 1";
-				ResultSet result = query.executeQuery(sqllast);
-				String sql = "INSERT INTO student(matrikelnr,vorname,name,email) VALUES(?,?,?,?)";
-				PreparedStatement preparedStatement = con.prepareStatement(sql);
-
-				while (result.next()) {
-					preparedStatement.setInt(1, id);
-					preparedStatement.setString(2, firstname);
-					preparedStatement.setString(3, name);
-					preparedStatement.setString(4, email);
-					preparedStatement.executeUpdate();
+	public boolean createStudent(int id, String name, String firstname,String email) {
+			try {
+				con = getConnection();
+				if (con != null) {
+					query = con.createStatement();
+					String sql = "INSERT INTO student(matrikelnr,vorname,name,email)"
+							+ "VALUES("+id +","+firstname+","+ name+ ","+email+")";
+					query.executeUpdate(sql);
 					return true;
 				}
-				preparedStatement.setInt(1, id);
-				preparedStatement.setString(2, firstname);
-				preparedStatement.setString(3, name);
-				preparedStatement.setString(4, email);
-				preparedStatement.executeUpdate();
-				return true;
+			} catch (SQLException e) {
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			e.printStackTrace();
+			return false;
 		}
-		return false;
-
-	}
-
+		
 	public ResultSet getAllStudents() {
 
 		try {
@@ -616,27 +549,11 @@ public class DB2Middle {
 			con = getConnection();
 
 			if (con != null) {
-
 				query = con.createStatement();
-
-				String sqllast = "SELECT *  FROM fach ORDER BY fachnr DESC LIMIT 1";
-				ResultSet result = query.executeQuery(sqllast);
-				String sql = "INSERT INTO fach(fachnr,name) VALUES(?,?)";
-				PreparedStatement preparedStatement = con.prepareStatement(sql);
-
-				while (result.next()) {
-					int id = result.getInt(1) + 1;
-					preparedStatement.setInt(1, id);
-					preparedStatement.setString(2, name);
-					preparedStatement.executeUpdate();
-					return true;
-				}
-				preparedStatement.setInt(1, 1);
-				preparedStatement.setString(2, name);
-				preparedStatement.executeUpdate();
+				String sql = "INSERT INTO fach(name) VALUES("+ String.valueOf(name) + ")";
+				query.executeUpdate(sql);
 				return true;
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
