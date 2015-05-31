@@ -23,10 +23,15 @@ public class DB2Middle {
 	private static Statement query;
 	private static PreparedStatement preparedStatement;
 
-	private DB2Middle() {
+	public DB2Middle() {
+	
+	}
+
+	public  Connection getConnection() throws SQLException {
+		if (con == null)
+			new DB2Middle();
 		try {
-			Class.forName("com.mysql.jdbc.Driver"); // Datenbanktreiber für JDBC
-													// Schnittstellen laden.
+			Class.forName("com.mysql.jdbc.Driver"); // Datenbanktreiber für JDBC Schnittstellen laden.
 
 			// Verbindung zur JDBC-Datenbank herstellen.
 			con = DriverManager.getConnection("jdbc:mysql://" + dbHost + ":"
@@ -40,20 +45,16 @@ public class DB2Middle {
 			System.out.println("SQLState: " + e.getSQLState());
 			System.out.println("VendorError: " + e.getErrorCode());
 		}
-	}
-
-	public static Connection getConnection() throws SQLException {
-		if (con == null)
-			new DB2Middle();
 		return con;
 	}
 
-	public boolean createRoom(int seats) {
+	public  boolean createRoom(int seats) {
 		try {
 			con = getConnection();
 			if (con != null) {
 				query = con.createStatement();
-				String sql = "INSERT INTO raum(sitzplätze) VALUES("+ seats +")";
+				String sql = "INSERT INTO raum(sitzplätze) VALUES(" + seats
+						+ ")";
 				query.executeUpdate(sql);
 				return true;
 			}
@@ -169,13 +170,20 @@ public class DB2Middle {
 
 	// Vorlesung
 
-	public boolean createLecture(String name, int roomnr, int professornr,int coursenr) {
+	public boolean createLecture(String name, int roomnr, int professornr,
+			int coursenr) {
 		try {
 			con = getConnection();
 			if (con != null) {
 				query = con.createStatement();
 				String sql = "INSERT INTO vorlesung(name,raumnr,dozentnr,fachnr)"
-						+ "VALUES("+name +","+roomnr+","+ professornr+ ","+coursenr+")";
+						+ "VALUES("
+						+ name
+						+ ","
+						+ roomnr
+						+ ","
+						+ professornr
+						+ "," + coursenr + ")";
 				query.executeUpdate(sql);
 				return true;
 			}
@@ -296,21 +304,29 @@ public class DB2Middle {
 
 	// Professor
 
-	public boolean createProfessor(String name, String firstname, String email,String tel) {
-				try {
-					con = getConnection();
-					if (con != null) {
-						query = con.createStatement();
-						String sql = "INSERT INTO dozent(email,telefonnr,vorname,name) "
-								+ "VALUES("+email+","+ tel+","+firstname+","+name + ")";
-						query.executeUpdate(sql);
-						return true;
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-				return false;
+	public boolean createProfessor(String name, String firstname, String email,
+			String tel) {
+		try {
+			con = getConnection();
+			if (con != null) {
+				query = con.createStatement();
+				String sql = "INSERT INTO dozent(email,telefonnr,vorname,name) "
+						+ "VALUES("
+						+ email
+						+ ","
+						+ tel
+						+ ","
+						+ firstname
+						+ ","
+						+ name + ")";
+				query.executeUpdate(sql);
+				return true;
 			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 
 	public ResultSet getAllProfessors() {
 
@@ -422,22 +438,30 @@ public class DB2Middle {
 
 	// Student
 
-	public boolean createStudent(int id, String name, String firstname,String email) {
-			try {
-				con = getConnection();
-				if (con != null) {
-					query = con.createStatement();
-					String sql = "INSERT INTO student(matrikelnr,vorname,name,email)"
-							+ "VALUES("+id +","+firstname+","+ name+ ","+email+")";
-					query.executeUpdate(sql);
-					return true;
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+	public boolean createStudent(int id, String name, String firstname,
+			String email) {
+		try {
+			con = getConnection();
+			if (con != null) {
+				query = con.createStatement();
+				String sql = "INSERT INTO student(matrikelnr,vorname,name,email)"
+						+ "VALUES("
+						+ id
+						+ ","
+						+ firstname
+						+ ","
+						+ name
+						+ ","
+						+ email + ")";
+				query.executeUpdate(sql);
+				return true;
 			}
-			return false;
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
-		
+		return false;
+	}
+
 	public ResultSet getAllStudents() {
 
 		try {
@@ -550,7 +574,8 @@ public class DB2Middle {
 
 			if (con != null) {
 				query = con.createStatement();
-				String sql = "INSERT INTO fach(name) VALUES("+ String.valueOf(name) + ")";
+				String sql = "INSERT INTO fach(name) VALUES("
+						+ String.valueOf(name) + ")";
 				query.executeUpdate(sql);
 				return true;
 			}
